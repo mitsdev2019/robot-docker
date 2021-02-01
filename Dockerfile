@@ -1,21 +1,21 @@
 FROM python:3
 
-LABEL maintainer="thomas.jaspers@codecentric.de"
+WORKDIR /usr/src/app
 
-#
-# Let's make sure we are always having the latest version of pip installed
-#
-RUN python -m pip install --upgrade pip
+COPY requirements.txt .
 
-#
-# Installing the latest robot framework version
-#
-RUN python3 -m pip install robotframework
+RUN pip install --no-cache-dir -r requirements.txt
+#COPY run_tests.sh ./
 
-#
-# Installing selenium2 test library
-#
-RUN python3 -m pip install robotframework-selenium2library
-RUN python3 -m pip install selenium
+COPY webui.robot .
+#RUN wget -q "https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip" -O /tmp/chromedriver.zip \
+   # && unzip /tmp/chromedriver.zip -d /usr/bin/ \
+    #&& rm /tmp/chromedriver.zip
 
-CMD ["robot", "/usr/src/project/sample-0-trivial/sample-0-trivial.txt"]
+#RUN CHROMEDRIVER_VERSION=`wget --no-verbose --output-document - https://chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
+    ###chmod +x /opt/chromedriver/chromedriver && \
+    #ln -fs /opt/chromedriver/chromedriver /usr/local/bin/chromedriver
+#ENTRYPOINT [ "bash","run_tests.sh"] 
+
+#CMD [ "robot", "--variable", "BROWSER:chrome", "--outputdir", "results", "webui.robot" ]
+CMD [ "robot", "--outputdir", "results", "webui.robot" ]
